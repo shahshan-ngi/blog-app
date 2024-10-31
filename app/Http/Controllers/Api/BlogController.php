@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Blog;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreRequest;
 use App\Http\Controllers\Controller;
@@ -95,4 +96,21 @@ class BlogController extends Controller
             return $e->getMessage();
         }
     }
+
+    public function myblogs($userid){
+        try {
+   
+            $user = User::findOrFail($id);
+      
+            $blogs = $user->blogs()->orderBy('created_at', 'desc')->get();
+    
+      
+            return success(['blogs' => $blogs], 'Blogs returned successfully', 200);
+    
+        } catch (\Exception $e) {
+          
+            return error($e->getMessage());
+        }
+    }
+    
 }

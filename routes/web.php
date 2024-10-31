@@ -18,4 +18,5 @@ use App\Http\Controllers\BlogViewController;
 
 Route::get('/login',[AuthViewController::class,'loginform'])->name('login');
 Route::get('/register',[AuthViewController::class,'registerform'])->name('auth.registerform');
+Route::get('/myblogs',[BlogViewController::class,'myblogs']);
 Route::resource('blogs', BlogViewController::class)->except(['destroy','show']);

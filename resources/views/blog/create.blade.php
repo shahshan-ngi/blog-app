@@ -42,6 +42,12 @@
 </div>
 <script>
     $(document).ready(function(){
+        $token=localStorage.getItem('auth_token');
+        if($token){
+            console.log($token);
+        }else{
+            console.log('no token');
+        }
         $("#CreateBlog").on('submit',function(e){
             e.preventDefault();
             var formData = new FormData(this);
@@ -51,13 +57,17 @@
                 url: "http://127.0.0.1:8000/api/blogs", 
                 type: 'POST',
                 data: formData,
+                headers:{
+                    'Authorization': `Bearer ${$token}`
+                },
                 contentType: false, 
                 processData: false, 
                 success: function(response) {
-                    console.log(response);
+                    window.location.href = "http://127.0.0.1:8000/blogs";
                 },
                 error: function(xhr) {
                    console.log(xhr);
+               
                 }
                 }
             );

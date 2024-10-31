@@ -42,18 +42,17 @@
 </div>
 <script>
     $(document).ready(function() {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
+        const token=localStorage.getItem('auth_token');
         const urlParts = window.location.pathname.split('/'); 
         const blogId = urlParts[urlParts.length - 2]; 
         if (blogId) {
-      
+            
             $.ajax({
                 url: `http://127.0.0.1:8000/api/blogs/${blogId}`, 
                 type: 'GET',
+                headers: {
+                'Authorization': `Bearer ${token}`
+                },
                 success: function(response) {
                     if (response.status === 'success') {
                         const blog = response.data; 
@@ -81,11 +80,16 @@
 
             $.ajax({
                 url:`http://127.0.0.1:8000/api/blogs/${blogId}`, 
-                type: 'PUT',
+                type: 'POST',
                 data: formData,
+                headers:{
+                    'X-HTTP-Method-Override': 'PUT',
+                     'Authorization': `Bearer ${token}`
+                },
                 contentType: false, 
                 processData: false, 
                 success: function(response) {
+             
                     console.log(response);
                 },
                 error: function(xhr) {

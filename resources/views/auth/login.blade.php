@@ -37,10 +37,9 @@
     $(document).ready(function() {
         $('#LoginForm').on('submit', function(e) {
             e.preventDefault(); 
-            console.log("Form submitted"); // Debug log
-
+         
             var formData = new FormData(this);
-            console.log("Form Data:", formData); // Log form data for verification
+  
 
             $.ajax({
                 url: "http://127.0.0.1:8000/api/login", 
@@ -49,10 +48,18 @@
                 contentType: false, 
                 processData: false, 
                 success: function(response) {
-                    console.log(response);
+                    if (response.data.auth_token) {
+                    localStorage.setItem('auth_token', response.data.auth_token);
+                    localStorage.setItem('user',response.data.user.id);
+                    console.log("Token stored in local storage:", response.data.auth_token);
+                    window.location.href = "http://127.0.0.1:8000/blogs";
+                } else {
+                    console.log("No token found in response");
+                }
                 },
                 error: function(xhr) {
                     console.log(xhr);
+                    window.location.href = "http://127.0.0.1:8000/login";
                 }
             });
         });

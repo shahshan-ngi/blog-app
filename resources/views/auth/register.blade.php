@@ -54,24 +54,33 @@
 
     <script>
   $(document).ready(function() {
-    $("#CreateBlog").on('submit', function(e) {
+    $("#RegisterForm").on('submit', function(e) {
         e.preventDefault(); 
 
   
         var formData = new FormData(this);
 
         $.ajax({
-            url: "http://127.0.0.1:8000/api/blogs",
+            url: "http://127.0.0.1:8000/api/register",
             type: 'POST',
             data: formData,
             contentType: false,
             processData: false,
             success: function(response) {
                 console.log(response);
+                if (response.data.auth_token) {
+                    localStorage.setItem('auth_token', response.data.auth_token);
+                    localStorage.setItem('user',response.data.user.id);
+                    console.log("Token stored in local storage:", response.data.auth_token);
+                    window.location.href = "http://127.0.0.1:8000/blogs";
+                } else {
+                    console.log("No token found in response");
+                }
              
             },
             error: function(xhr) {
                 console.error(xhr);
+                window.location.href = "http://127.0.0.1:8000/register";
       
             }
         });

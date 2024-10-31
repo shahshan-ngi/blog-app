@@ -23,7 +23,7 @@ class AuthController extends Controller
     
             return success([
                 'user' => $user,
-                'token' => $token
+                'auth_token' => $token
             ], 'Registered successfully', 201);
         } catch (\Exception $e) {
 
@@ -55,16 +55,23 @@ class AuthController extends Controller
         try {
             $user = Auth::user();
             $user->tokens()->delete();
-            Auth::logout();
-
-
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
 
             return success(null, 'Logged out successfully', 200);
         } catch (\Exception $e) {
     
             return error($e->getMessage(), 500);
+        }
+    }
+    
+    public function getUser($id){
+        try{
+            $user=User::findorfail($id);
+            return success([
+                'user' => ['id' => $user->id,
+                    'profile_image' => $user->profile_image],
+            ],'Login successful.', 200);
+        }catch(\Exception $e){
+            return $e->getMessage();
         }
     }
 }

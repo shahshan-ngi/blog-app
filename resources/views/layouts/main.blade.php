@@ -17,27 +17,137 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <style>
+        /* Sidebar styling */
+        .sidebar {
+            position: fixed;
+            top: 30; /* Adjust to match the navbar height */
+            left: 0;
+            width: 200px;
+            height: calc(100vh - 70px); /* Full height minus navbar height */
+            background-color: #343a40; /* Dark background */
+            padding-top: 20px;
+        }
+        .sidebar .nav-link {
+            color: #ffffff; /* White link color */
+        }
+        .sidebar .nav-link:hover {
+            background-color: #495057; /* Light gray hover color */
+        }
+        .content {
+            margin-left: 200px; /* Space for sidebar */
+            padding: 20px;
+        }
+    </style>
 </head>
     
-   
-</head>
+
 <body>
-    <div class="bg-secondary"> 
-        <div class="container py-3 d-flex justify-content-between align-items-center"> 
+ 
+    <div class="bg-secondary navbar-fixed-top"> 
+        <div class="container py-3 d-flex justify-content-between align-items-center">
             <a style="text-decoration:none;" href="">
                 <div class="h1 text-white">Blog App</div>
             </a>
-            @auth
-            <div class="profile-avatar">
-                <img src="{{ Storage::url('images/profile/' . Auth::user()->id . '/' . Auth::user()->profile_image) }}"  class="rounded-circle" width="50" height="50">
+            <div id="Auth" class="d-flex align-items-center">
+              
             </div>
-            @endauth
         </div>
     </div>
 
-    @yield('home-section')
+    <!-- Sidebar -->
+     <div id="sidebar">
 
+     </div>
+  
+
+    <!-- Main Content Area -->
+    <div class="content">
+        @yield('home-section')
+    </div>
+
+    <script>
+    $(document).ready(function() {
+        const user = {
+            id: '',
+            profile_image: ''
+        };
+        if (localStorage.getItem('user')) {
+            $.ajax({
+                url: `http://127.0.0.1:8000/api/user/${localStorage.getItem('user')}`, 
+                type: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                },
+                success: function(response) {
+                    console.log("User fetched successfully:", response);
+                    user.id = response.data.user.id;
+                    user.profile_image = `{{ asset('storage/images/profile/') }}/${response.data.user.id}/${response.data.user.profile_image}`;
+
+                    renderAuthSection();
+                },
+                error: function(xhr) {
+                    console.error("User fetch error:", xhr);
+                }
+            });
+        } else if (localStorage.getItem('auth_token')) {
+          
+            renderAuthSection();
+        }
+
+        function renderAuthSection() {
+            let sideBar=` 
+              <div class="sidebar">
+
+            <ul class="nav flex-column">
+            <li class="nav-item">
+                <a href="http://127.0.0.1:8000/blogs/" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item">
+                <a href="http://127.0.0.1:8000/myblogs" class="nav-link">My Blogs</a>
+            </li>
+            <li class="nav-item">
+                <a href="http://127.0.0.1:8000/blogs/create" class="nav-link">Create Blog</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" id="logoutLink" class="nav-link">Logout</a>
+            </li>
+        </ul>
+        </div>`;
+            let authHtml = `
+                <div class="profile-avatar mx-3">
+                    <img src="${user.profile_image}" class="rounded-circle" width="50" height="50">
+                </div>
+                <button id="logoutButton" class="btn btn-danger">Logout</button>`;
+            $('#sidebar').html(sideBar);
+            $('#Auth').html(authHtml); 
+          
+
+          
+            $('#logoutButton').on('click', function() {
+                $.ajax({
+                    url: "http://127.0.0.1:8000/api/logout", 
+                    type: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                    },
+                    success: function(response) {
+                        localStorage.removeItem('auth_token');
+                        localStorage.removeItem('user');
+                        console.log("Logout successful:", response);
+
+                        window.location.href = "http://127.0.0.1:8000/login"; 
+                    },
+                    error: function(xhr) {
+                        console.error("Logout error:", xhr);
+                    }
+                });
+            });
+        }
+    });
+</script>
 
 </body>
 </html>

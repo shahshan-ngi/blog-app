@@ -9,6 +9,14 @@ class BlogViewController extends Controller
     // public function allowed(){
     //     return auth()->user()->hasAnyRole(['author','admin']);
     // }
+
+    public function index(){
+        try{
+            return view('blog.home');
+        }catch(\Exception $e){
+            return $e->getMessage();
+        }
+    }
     public function create()
     {   
         try{
@@ -29,6 +37,14 @@ class BlogViewController extends Controller
     public function edit(){
         try{
             return view('blog.update');
+        }catch(\Exception $e){
+            return $e->getMessage();
+        }
+    }
+
+    public function myblogs(){
+        try{
+            return view('blog.myblogs');
         }catch(\Exception $e){
             return $e->getMessage();
         }
