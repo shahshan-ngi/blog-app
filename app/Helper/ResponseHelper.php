@@ -1,11 +1,19 @@
 <?php
-function success($data,$message,$code=200){
-
-    return response()->json([
+function success($data, $message, $code = 200, $cookies = [])
+{
+    $response = response()->json([
         'status' => 'success',
-        'data'=>$data,
+        'data' => $data,
         'message' => $message
     ], $code);
+
+    if (count($cookies) > 0) {
+        foreach ($cookies as $cookie) {
+            $response->withCookie($cookie); 
+        }
+    }
+
+    return $response;
 }
 function error($message, $code = 500)
 {

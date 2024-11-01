@@ -20,11 +20,13 @@ class AuthController extends Controller
             $request->password = Hash::make($request->password);
             $user = User::createUser($request);
             $token = $user->createToken('auth-token')->plainTextToken;
+            $cookies[] = cookie('auth_token', $token, 60 * 24, '/', null, true, true);
+            $cookies[]= cookie('user_id',$user->id,60*24,'/',null,true,true);
     
             return success([
                 'user' => $user,
                 'auth_token' => $token
-            ], 'Registered successfully', 201);
+            ], 'Registered successfully', 201,$cookies);
         } catch (\Exception $e) {
 
             return error($e->getMessage(), 500);
@@ -36,16 +38,20 @@ class AuthController extends Controller
         try {
             if (Auth::attempt($request->only('email', 'password'))) {
                 $user = Auth::user();
-                $token = $user->createToken('auth-token');
+                $token = $user->createToken('auth-token'); 
+                
+           
+                $cookies[] = cookie('auth_token', $token->plainTextToken, 60 * 24, '/', null, false, false);
+                $cookies[] = cookie('user_id', $user->id, 60 * 24, '/', null, false, false);
+                
                 return success([
                     'user' => $user,
                     'auth_token' => $token->plainTextToken
-                ],'Login successful.', 200);
+                ], 'Login successful.', 200, $cookies);
             } else {
                 return unauthorized('Invalid credentials.');
             }
         } catch (\Exception $e) {
-         
             return error($e->getMessage(), 500);
         }
     }
@@ -53,7 +59,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         try {
-            $user = Auth::user();
+            $user = Auth::guard('sanctum')->user();
             $user->tokens()->delete();
 
             return success(null, 'Logged out successfully', 200);

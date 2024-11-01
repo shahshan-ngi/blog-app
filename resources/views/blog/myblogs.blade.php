@@ -24,26 +24,29 @@
 </div>
 <script>
     $(document).ready(function () {
-        const userId = localStorage.getItem('user'); 
-        const token = localStorage.getItem('auth_token');
+     
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        const userId = getCookie('user_id'); 
+
         const blogsUrl = `http://127.0.0.1:8000/api/user/${userId}/blogs`;
 
-        if (userId && token) {
+        if (userId) {
             fetchBlogs(1); // Fetch first page by default
         } else {
-            console.error("User ID or auth token missing.");
+            console.error("User ID missing.");
         }
 
         function fetchBlogs(page = 1) {
-            axios.get(`${blogsUrl}?page=${page}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
+            axios.get(`${blogsUrl}?page=${page}`)
             .then(response => {
-                const blogs = response.data.data.blogs;
-                const currentPage = response.data.current_page; // Assuming this data comes from your backend
-                const totalPages = response.data.total_pages; // Assuming this data comes from your backend
+                const blogs = response.data.data.blogs.data;
+                const currentPage = response.data.current_page; 
+                const totalPages = response.data.total_pages; 
 
                 console.log(blogs);
                 $('.blog-table-body').empty(); 
@@ -68,7 +71,6 @@
                     $('.blog-table-body').append(rowHtml);
                 });
 
-                // Render pagination links
                 renderPagination(currentPage, totalPages);
 
                 $('.update-blog').on('click', function() {
@@ -87,7 +89,7 @@
         }
 
         function renderPagination(currentPage, totalPages) {
-            $('#paginationContainer').empty(); // Clear existing pagination links
+            $('#paginationContainer').empty(); 
             for (let i = 1; i <= totalPages; i++) {
                 const activeClass = (i === currentPage) ? 'active' : '';
                 $('#paginationContainer').append(`
@@ -96,11 +98,10 @@
             }
         }
 
-        // Handle pagination link clicks
         $(document).on('click', '.pagination-link', function(e) {
             e.preventDefault();
             const page = $(this).data('page');
-            fetchBlogs(page); // Fetch blogs for the selected page
+            fetchBlogs(page); 
         });
 
         function updateBlog(blogId) {
@@ -108,11 +109,7 @@
         }
 
         function deleteBlog(blogId) {
-            axios.delete(`http://127.0.0.1:8000/api/blogs/${blogId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
+            axios.delete(`http://127.0.0.1:8000/api/blogs/${blogId}`)
             .then(response => {
                 console.log("Blog deleted successfully:", response);
                 fetchBlogs(); // Fetch blogs again after deletion
@@ -123,4 +120,5 @@
         }
     });
 </script>
+
 @endsection

@@ -17,10 +17,10 @@ use App\Http\Controllers\Api\BlogController;
 */
 
 
-Route::middleware('auth:sanctum')->group(function(){
-    Route::post('/logout',[AuthController::class,'logout']);
-    Route::get('/user/{id}',[AuthController::class,'getUser']);
-    Route::get('/user/{userid}/blogs',[BlogController::class,'myblogs']);
+Route::middleware('withcookie')->group(function() {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user/{id}', [AuthController::class, 'getUser']);
+    Route::get('/user/{userid}/blogs', [BlogController::class, 'myblogs']);
     Route::resource('blogs', BlogController::class);
 });
 Route::post('/login',[AuthController::class,'login']);

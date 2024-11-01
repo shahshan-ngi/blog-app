@@ -74,13 +74,23 @@
             id: '',
             profile_image: ''
         };
-        if (localStorage.getItem('user')) {
-            $.ajax({
-                url: `http://127.0.0.1:8000/api/user/${localStorage.getItem('user')}`, 
+
+    
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+        const authtoken= getCookie('auth_token');
+        console.log(authtoken);
+
+     
+
+            if(authtoken){
+                $.ajax({
+                url: `http://127.0.0.1:8000/api/user/${getCookie('user_id')}`,
                 type: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-                },
+           
                 success: function(response) {
                     console.log("User fetched successfully:", response);
                     user.id = response.data.user.id;
@@ -92,30 +102,29 @@
                     console.error("User fetch error:", xhr);
                 }
             });
-        } else if (localStorage.getItem('auth_token')) {
-          
-            renderAuthSection();
-        }
+            }
+         
+           
+        
 
         function renderAuthSection() {
-            let sideBar=` 
-              <div class="sidebar">
-
-            <ul class="nav flex-column">
-            <li class="nav-item">
-                <a href="http://127.0.0.1:8000/blogs/" class="nav-link">Home</a>
-            </li>
-            <li class="nav-item">
-                <a href="http://127.0.0.1:8000/myblogs" class="nav-link">My Blogs</a>
-            </li>
-            <li class="nav-item">
-                <a href="http://127.0.0.1:8000/blogs/create" class="nav-link">Create Blog</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" id="logoutLink" class="nav-link">Logout</a>
-            </li>
-        </ul>
-        </div>`;
+            let sideBar = ` 
+            <div class="sidebar">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="http://127.0.0.1:8000/blogs/" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="http://127.0.0.1:8000/myblogs" class="nav-link">My Blogs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="http://127.0.0.1:8000/blogs/create" class="nav-link">Create Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" id="logoutLink" class="nav-link">Logout</a>
+                    </li>
+                </ul>
+            </div>`;
             let authHtml = `
                 <div class="profile-avatar mx-3">
                     <img src="${user.profile_image}" class="rounded-circle" width="50" height="50">
@@ -123,19 +132,15 @@
                 <button id="logoutButton" class="btn btn-danger">Logout</button>`;
             $('#sidebar').html(sideBar);
             $('#Auth').html(authHtml); 
-          
 
-          
             $('#logoutButton').on('click', function() {
                 $.ajax({
                     url: "http://127.0.0.1:8000/api/logout", 
                     type: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-                    },
+              
                     success: function(response) {
-                        localStorage.removeItem('auth_token');
-                        localStorage.removeItem('user');
+                        document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                        document.cookie = "user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                         console.log("Logout successful:", response);
 
                         window.location.href = "http://127.0.0.1:8000/login"; 
@@ -148,6 +153,7 @@
         }
     });
 </script>
+
 
 </body>
 </html>

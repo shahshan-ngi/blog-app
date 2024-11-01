@@ -14,17 +14,14 @@
 
 <script>
     $(document).ready(function(){
-        const token=localStorage.getItem('auth_token');
+ 
         $.ajax({
             url: `http://127.0.0.1:8000/api/blogs/`, 
             type: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
             success: function(response) {
                 if (response.status === 'success') {
                   
-                    const blogs = response.data.blogs;  
+                    const blogs = response.data.blogs.data;  
                     $('.blog-container').empty();
 
                     blogs.forEach(function(blog) {

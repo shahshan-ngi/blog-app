@@ -7,11 +7,15 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\BlogResource;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\BlogCollection;
 
 class BlogController extends Controller
 {   
     public function allowed(){
-        return auth()->user()->hasAnyRole(['author','admin']);
+        $user=Auth::guard('sanctum')->user();
+        return $user->hasAnyRole(['author','admin']);
     }
     public function index(Request $request){
         try {
@@ -30,12 +34,10 @@ class BlogController extends Controller
             $blogCollection = $blogs->orderBy('created_at', 'asc')->get();
             
        
-            // $blogCollection = new TaskCollection($todos); 
-            // $taskCollection= TaskResource::collection($todos);
     
    
     
-            return success(['blogs' =>$blogCollection], 'blogs retrieved successfully');
+            return success(['blogs' =>new BlogCollection($blogCollection)], 'blogs retrieved successfully');
         } catch (\Exception $e) {
             return error($e->getMessage());
         }
@@ -91,7 +93,7 @@ class BlogController extends Controller
     public function show($id){
         try{
             $blog=Blog::findorfail($id);
-            return success($blog, 'blog reutrned successfully', 200);
+            return success(new BlogResource($blog), 'blog reutrned successfully', 200);
         }catch(\Exception $e){
             return $e->getMessage();
         }
@@ -100,12 +102,12 @@ class BlogController extends Controller
     public function myblogs($userid){
         try {
    
-            $user = User::findOrFail($id);
+            $user = User::findOrFail($userid);
       
             $blogs = $user->blogs()->orderBy('created_at', 'desc')->get();
     
       
-            return success(['blogs' => $blogs], 'Blogs returned successfully', 200);
+            return success(['blogs' => new BlogCollection($blogs)], 'Blogs returned successfully', 200);
     
         } catch (\Exception $e) {
           

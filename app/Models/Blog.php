@@ -20,21 +20,24 @@ class Blog extends Model
 
     public static function createBlog($data)
     {   
-            $name='';
-            $file='';
-            if($data->file('thumbnail')){
-                $file=$data->file('thumbnail');
-            $name=$file->getClientOriginalName();
-            $filepath=$data->file('thumbnail')->storeAs("images/blogs/{$blog->id}",$name,'public');
-            }
-            $blog = self::create([
-                'user_id'=>Auth::User()->id,
-                'title' => $data->title,
-                'content' => $data->content,
-                'thumbnail'=>$data->thumbnail?$name:null
-            ]);
-           
-            return $blog;
+        $name = '';
+        if ($data->file('thumbnail')) {
+            $file = $data->file('thumbnail');
+            $name = $file->getClientOriginalName();
+        }
+
+        $blog = self::create([
+            'user_id' => Auth::guard('sanctum')->user()->id,
+            'title' => $data->title,
+            'content' => $data->content,
+            'thumbnail' => $name ? $name : null,
+        ]);
+
+        if ($file) {
+            $file->storeAs("images/blogs/{$blog->id}", $name, 'public');
+        }
+        
+        return $blog;
     }
 
     public static function updateBlog($id, array $data)
