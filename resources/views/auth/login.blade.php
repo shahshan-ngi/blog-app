@@ -46,8 +46,6 @@
                 contentType: false, 
                 processData: false, 
                 success: function(response) {
-                    // Check for the cookie set by the server
-                    console.log("Login successful, response received");
 
                 
                     if (response.status === 'success') {

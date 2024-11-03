@@ -77,22 +77,20 @@
 
     
         function getCookie(name) {
+      
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
             if (parts.length === 2) return parts.pop().split(';').shift();
         }
         const authtoken= getCookie('auth_token');
-        console.log(authtoken);
-
-     
 
             if(authtoken){
                 $.ajax({
-                url: `http://127.0.0.1:8000/api/user/${getCookie('user_id')}`,
+                url: `http://127.0.0.1:8000/api/user/`,
                 type: 'GET',
-           
+               
                 success: function(response) {
-                    console.log("User fetched successfully:", response);
+                   
                     user.id = response.data.user.id;
                     user.profile_image = `{{ asset('storage/images/profile/') }}/${response.data.user.id}/${response.data.user.profile_image}`;
 
@@ -137,7 +135,6 @@
                 $.ajax({
                     url: "http://127.0.0.1:8000/api/logout", 
                     type: 'POST',
-              
                     success: function(response) {
                         document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                         document.cookie = "user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class BlogViewController extends Controller
@@ -17,12 +18,12 @@ class BlogViewController extends Controller
             return $e->getMessage();
         }
     }
-    public function create()
+    public function create(  )
     {   
         try{
             // if($this->allowed()){
-               
-                return view('blog.create');
+               $categories=Category::all();
+                return view('blog.create',compact('categories'));
             // }else{
             //     return redirect(route("blog.create"))->with('error', '403 Forbidden, you are not authorized to access this url');
             // }

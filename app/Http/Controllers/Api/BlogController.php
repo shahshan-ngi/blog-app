@@ -14,8 +14,9 @@ use App\Http\Resources\BlogCollection;
 class BlogController extends Controller
 {   
     public function allowed(){
+
         $user=Auth::guard('sanctum')->user();
-        return $user->hasAnyRole(['author','admin']);
+        return true; //$user->hasAnyRole(['author','admin']);
     }
     public function index(Request $request){
         try {
@@ -99,13 +100,13 @@ class BlogController extends Controller
         }
     }
 
-    public function myblogs($userid){
+    public function myblogs(Request $request){
         try {
-   
-            $user = User::findOrFail($userid);
-      
-            $blogs = $user->blogs()->orderBy('created_at', 'desc')->get();
-    
+            $page=$request->page;
+            $user = User::findOrFail($request->cookie('user_id'));
+
+            $blogs = $user->blogs()->skip($skip)->take(5)->orderBy('created_at', 'desc')->get();
+            
       
             return success(['blogs' => new BlogCollection($blogs)], 'Blogs returned successfully', 200);
     

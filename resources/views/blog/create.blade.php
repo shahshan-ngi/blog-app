@@ -19,12 +19,25 @@
                 <input type="text"  value="{{ old('content') }}" name="content" class = "form-control" id="">
                 <div id="error-content" class="text-danger"></div>
 
-                    <div class="mb-3">
+                <div class="row mb-3 d-flex align-items-start">
+                    <!-- Thumbnail Input -->
+                    <div class="col-md-6">
                         <label for="thumbnail" class="form-label">Blog Image</label>
-                        <input type="file" name="thumbnail" class="form-control" id="thumbnail" accept="image/*">
-                        <div class="text-danger">
+                        <input type="file" name="thumbnail" class="form-control" id="thumbnail" accept="image/*" style="max-width: 100%;">
                     </div>
+
+                    <!-- Categories Selector -->
+                    <div class="col-md-6">
+                        <label for="categories" class="form-label">Categories</label>
+                        <select name="categories[]" multiple class="form-control">
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}">
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
+                </div>
 
              
                 <button class="btn btn-primary btn-lg mt-4">Add Blog</button>

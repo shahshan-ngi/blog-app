@@ -16,8 +16,9 @@ class AuthenticateWithToken
      */
     public function handle(Request $request, Closure $next): Response
     {
-      
+       
          if ($token = $request->cookie('auth_token')) {
+            
             $request->headers->set('Authorization', 'Bearer ' . $token);
         }
         if (!Auth::guard('sanctum')->check()) {

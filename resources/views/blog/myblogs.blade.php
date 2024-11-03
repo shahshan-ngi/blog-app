@@ -25,21 +25,21 @@
 <script>
     $(document).ready(function () {
      
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-        }
+        // function getCookie(name) {
+        //     const value = `; ${document.cookie}`;
+        //     const parts = value.split(`; ${name}=`);
+        //     if (parts.length === 2) return parts.pop().split(';').shift();
+        // }
 
-        const userId = getCookie('user_id'); 
+        // const userId = getCookie('user_id'); 
 
-        const blogsUrl = `http://127.0.0.1:8000/api/user/${userId}/blogs`;
+        const blogsUrl = `http://127.0.0.1:8000/api/user/blogs`;
 
-        if (userId) {
-            fetchBlogs(1); // Fetch first page by default
-        } else {
-            console.error("User ID missing.");
-        }
+        //if (userId) {
+            fetchBlogs(1); 
+        // } else {
+        //     console.error("User ID missing.");
+        // }
 
         function fetchBlogs(page = 1) {
             axios.get(`${blogsUrl}?page=${page}`)
@@ -112,7 +112,7 @@
             axios.delete(`http://127.0.0.1:8000/api/blogs/${blogId}`)
             .then(response => {
                 console.log("Blog deleted successfully:", response);
-                fetchBlogs(); // Fetch blogs again after deletion
+                fetchBlogs(); 
             })
             .catch(error => {
                 console.error("Error deleting blog:", error);

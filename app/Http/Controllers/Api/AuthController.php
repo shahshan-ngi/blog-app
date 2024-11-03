@@ -19,9 +19,10 @@ class AuthController extends Controller
         try {
             $request->password = Hash::make($request->password);
             $user = User::createUser($request);
+            Auth::login($user);
             $token = $user->createToken('auth-token')->plainTextToken;
-            $cookies[] = cookie('auth_token', $token, 60 * 24, '/', null, true, true);
-            $cookies[]= cookie('user_id',$user->id,60*24,'/',null,true,true);
+            $cookies[] = cookie('auth_token', $token, 60 * 24, '/', null, false, false);
+            $cookies[]= cookie('user_id',$user->id,60*24,'/',null,false,false);
     
             return success([
                 'user' => $user,
@@ -36,8 +37,9 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         try {
-            if (Auth::attempt($request->only('email', 'password'))) {
-                $user = Auth::user();
+            $user=User::where('email',$request->email)->first();
+            if ( $user) {
+                Auth::login($user);
                 $token = $user->createToken('auth-token'); 
                 
            
@@ -69,9 +71,9 @@ class AuthController extends Controller
         }
     }
     
-    public function getUser($id){
+    public function getUser(Request $request){
         try{
-            $user=User::findorfail($id);
+            $user=User::findorfail($request->cookie('user_id'));
             return success([
                 'user' => ['id' => $user->id,
                     'profile_image' => $user->profile_image],

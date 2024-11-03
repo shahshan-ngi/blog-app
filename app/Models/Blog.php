@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\User;
+use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,6 +22,8 @@ class Blog extends Model
     public static function createBlog($data)
     {   
         $name = '';
+        $file=null;
+      
         if ($data->file('thumbnail')) {
             $file = $data->file('thumbnail');
             $name = $file->getClientOriginalName();
@@ -36,6 +39,7 @@ class Blog extends Model
         if ($file) {
             $file->storeAs("images/blogs/{$blog->id}", $name, 'public');
         }
+        $blog->categories()->attach($data->categories);
         
         return $blog;
     }
@@ -57,5 +61,9 @@ class Blog extends Model
 
     public function user(){
         return $this->belongsTo(User::class);
+    }
+
+    public function categories(){
+        return $this->belongsToMany(Category::class);
     }
 }

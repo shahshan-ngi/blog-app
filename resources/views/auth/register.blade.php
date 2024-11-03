@@ -59,10 +59,7 @@
             processData: false,
             success: function(response) {
                 console.log(response);
-                if (response.data.auth_token) {
-                    localStorage.setItem('auth_token', response.data.auth_token);
-                    localStorage.setItem('user',response.data.user.id);
-                    console.log("Token stored in local storage:", response.data.auth_token);
+                if (response.status=='success') {
                     window.location.href = "http://127.0.0.1:8000/blogs";
                 } else {
                     console.log("No token found in response");
@@ -79,8 +76,8 @@
                     for (var field in errors) {
                         if (errors.hasOwnProperty(field)) {
                            
-                            var errorMessage = errors[field][0]; // Get the first error message for the field
-                            $('#' + field).next('.text-danger').text(errorMessage); // Set error message next to the field
+                            var errorMessage = errors[field][0]; 
+                            $('#' + field).next('.text-danger').text(errorMessage); 
                         }
                     }
                  } 
