@@ -17,16 +17,16 @@ class AuthenticateWithToken
     public function handle(Request $request, Closure $next): Response
     {
        
-         if ($token = $request->cookie('auth_token')) {
+        //  if ($token = $request->cookie('auth_token')) {
             
-            $request->headers->set('Authorization', 'Bearer ' . $token);
-        }
+        //     $request->headers->set('Authorization', 'Bearer ' . $token);
+        // }
         if (!Auth::guard('sanctum')->check()) {
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
-        if(!$request->cookie('user_id')==Auth::guard('sanctum')->user()->id){
-            return forbidden();
-        }
+        // if(!$request->cookie('user_id')==Auth::guard('sanctum')->user()->id){
+        //     return forbidden();
+        // }
 
         return $next($request);
     

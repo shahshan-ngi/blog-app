@@ -37,7 +37,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'title.required' => 'my message:A title is required',
-            'content.required' => 'my message:Description is required',
+            'content.required' => 'my message:Content is required',
             'thumbnail.mimes'=>'must be jpg or png'
         ];
     }

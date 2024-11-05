@@ -83,6 +83,8 @@
             if (parts.length === 2) return parts.pop().split(';').shift();
         }
         const authtoken= getCookie('auth_token');
+        
+
 
             if(authtoken){
                 $.ajax({

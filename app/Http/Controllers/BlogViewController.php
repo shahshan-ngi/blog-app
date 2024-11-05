@@ -13,7 +13,8 @@ class BlogViewController extends Controller
 
     public function index(){
         try{
-            return view('blog.home');
+            $categories=Category::all();
+            return view('blog.home',compact('categories'));
         }catch(\Exception $e){
             return $e->getMessage();
         }

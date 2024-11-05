@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -21,9 +22,14 @@ class AuthController extends Controller
             $user = User::createUser($request);
             Auth::login($user);
             $token = $user->createToken('auth-token')->plainTextToken;
+            session([
+                'auth_token' => $token,
+                'user_id' => $user->id
+            ]);
             $cookies[] = cookie('auth_token', $token, 60 * 24, '/', null, false, false);
             $cookies[]= cookie('user_id',$user->id,60*24,'/',null,false,false);
-    
+            UserRegistered::dispatch($user);
+             //event(new UserRegistered($user));
             return success([
                 'user' => $user,
                 'auth_token' => $token
@@ -41,7 +47,10 @@ class AuthController extends Controller
             if ( $user) {
                 Auth::login($user);
                 $token = $user->createToken('auth-token'); 
-                
+                session([
+                    'auth_token' => $token->plainTextToken,
+                    'user_id' => $user->id
+                ]);
            
                 $cookies[] = cookie('auth_token', $token->plainTextToken, 60 * 24, '/', null, false, false);
                 $cookies[] = cookie('user_id', $user->id, 60 * 24, '/', null, false, false);

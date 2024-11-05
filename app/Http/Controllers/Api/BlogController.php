@@ -16,7 +16,7 @@ class BlogController extends Controller
     public function allowed(){
 
         $user=Auth::guard('sanctum')->user();
-        return true; //$user->hasAnyRole(['author','admin']);
+        return $user->hasAnyRole(['author','admin']);
     }
     public function index(Request $request){
         try {
@@ -24,15 +24,13 @@ class BlogController extends Controller
             if ($request->has('search')) {
                 $blogs->search($request->search); 
             }
-            // if ($request->has('categories')) {
-            //     $selectedCategories = $request->input('categories');
-            //     $blogs->with('categories')
-            //         ->whereHas('categories', function ($query) use ($selectedCategories) {
-            //             $query->whereIn('categories.id', $selectedCategories);
-            //         });
-            // }
-    
-            $blogCollection = $blogs->orderBy('created_at', 'asc')->get();
+            if ($request->has('categories')) {
+                $selectedCategories = $request->input('categories');
+                $blogs->whereHas('categories', function ($query) use ($selectedCategories) {
+                    $query->whereIn('category.id', $selectedCategories);
+                });
+            }
+            $blogCollection = $blogs->orderBy('created_at', 'desc')->get();
             
        
     
@@ -93,8 +91,13 @@ class BlogController extends Controller
 
     public function show($id){
         try{
-            $blog=Blog::findorfail($id);
-            return success(new BlogResource($blog), 'blog reutrned successfully', 200);
+            if($this->allowed()){
+                $blog=Blog::findorfail($id);
+                return success(new BlogResource($blog), 'blog reutrned successfully', 200);
+            }else{
+                return forbidden();
+            }
+           
         }catch(\Exception $e){
             return $e->getMessage();
         }
@@ -102,13 +105,17 @@ class BlogController extends Controller
 
     public function myblogs(Request $request){
         try {
-            $page=$request->page;
-            $user = User::findOrFail($request->cookie('user_id'));
+            if($this->allowed()){
+                $user = User::findOrFail($request->cookie('user_id'));
 
-            $blogs = $user->blogs()->skip($skip)->take(5)->orderBy('created_at', 'desc')->get();
-            
-      
-            return success(['blogs' => new BlogCollection($blogs)], 'Blogs returned successfully', 200);
+                $blogs = $user->blogs()->orderBy('created_at', 'asc')->get();
+                
+          
+                return success(['blogs' => new BlogCollection($blogs)], 'Blogs returned successfully', 200);
+            }else{
+                return forbidden();
+            }
+           
     
         } catch (\Exception $e) {
           
