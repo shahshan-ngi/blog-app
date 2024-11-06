@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Jobs\MyJob;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Events\UserRegistered;
@@ -28,8 +29,8 @@ class AuthController extends Controller
             ]);
             $cookies[] = cookie('auth_token', $token, 60 * 24, '/', null, false, false);
             $cookies[]= cookie('user_id',$user->id,60*24,'/',null,false,false);
-            UserRegistered::dispatch($user);
-             //event(new UserRegistered($user));
+            //UserRegistered::dispatch($user);
+            event(new UserRegistered($user));
             return success([
                 'user' => $user,
                 'auth_token' => $token
@@ -46,6 +47,7 @@ class AuthController extends Controller
             $user=User::where('email',$request->email)->first();
             if ( $user) {
                 Auth::login($user);
+                dispatch(new MyJob($user));
                 $token = $user->createToken('auth-token'); 
                 session([
                     'auth_token' => $token->plainTextToken,

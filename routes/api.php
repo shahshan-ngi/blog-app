@@ -23,5 +23,6 @@ Route::middleware('withcookie')->group(function() {
     Route::get('/user/blogs', [BlogController::class, 'myblogs']);
     Route::resource('blogs', BlogController::class);
 });
+Route::post('/set-lang',[BlogController::class,'setLang']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/register',[AuthController::class,'register']);

@@ -6,10 +6,12 @@ use App\Models\Blog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreRequest;
+use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BlogResource;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\BlogCollection;
+use Illuminate\Support\Facades\Session;
 
 class BlogController extends Controller
 {   
@@ -121,6 +123,21 @@ class BlogController extends Controller
           
             return error($e->getMessage());
         }
+    }
+
+    public function setLang(Request $request){
+        try{
+           //dd($request->locale);
+            //App::setLocale($request->locale);
+            app()->setLocale($request->locale);
+            Session::put('locale', $request->locale);
+  
+            return success([], 'language set successfully');
+
+        }catch(\Exception $e){
+            return error($e->getMessage());
+        }
+       
     }
     
 }

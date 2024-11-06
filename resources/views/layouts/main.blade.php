@@ -47,14 +47,18 @@
 <body>
  
     <div class="bg-secondary navbar-fixed-top"> 
-        <div class="container py-3 d-flex justify-content-between align-items-center">
-            <a style="text-decoration:none;" href="">
-                <div class="h1 text-white">Blog App</div>
-            </a>
-            <div id="Auth" class="d-flex align-items-center">
-              
-            </div>
+    <div class="container py-3 d-flex justify-content-between align-items-center">
+        <a style="text-decoration:none;" href="">
+            <div class="h1 text-white">{{ __('messages.title') }}</div>
+        </a>
+        <div id="Auth" class="d-flex align-items-center">
+            <!-- Language Switcher -->
+            <select id="languageSwitcher" class="form-select" style="width: 100px;">
+                <option value="en" {{ app()->getLocale() === 'en' ? 'selected' : '' }}>English</option>
+                <option value="fr" {{ app()->getLocale() === 'fr' ? 'selected' : '' }}>Français</option>
+            </select>
         </div>
+    </div>
     </div>
 
     <!-- Sidebar -->
@@ -70,6 +74,27 @@
 
     <script>
     $(document).ready(function() {
+
+        $('#languageSwitcher').change(function() {
+            const selectedLang = $(this).val();
+            
+            $.ajax({
+                url: "http://127.0.0.1:8000/api/set-lang",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    locale: selectedLang
+                },
+                success: function() {
+       
+                    //location.reload();
+                },
+                error: function(xhr) {
+                    console.error("Language switch error:", xhr);
+                }
+            });
+        });
+
         const user = {
             id: '',
             profile_image: ''
@@ -112,7 +137,7 @@
             <div class="sidebar">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="http://127.0.0.1:8000/blogs/" class="nav-link">Home</a>
+                        <a href="http://127.0.0.1:8000/blogs/" class="nav-link">{{ __('messages.home') }}</a>
                     </li>
                     <li class="nav-item">
                         <a href="http://127.0.0.1:8000/myblogs" class="nav-link">My Blogs</a>
