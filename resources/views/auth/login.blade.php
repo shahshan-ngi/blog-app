@@ -34,6 +34,7 @@
     <script>
 
     $(document).ready(function() {
+        const locale = "{{app()->getLocale()}}";
         $('#LoginForm').on('submit', function(e) {
             e.preventDefault(); 
          
@@ -50,7 +51,7 @@
                 
                     if (response.status === 'success') {
                         console.log("Login successful. Redirecting to blogs...");
-                        window.location.href = "http://127.0.0.1:8000/blogs";
+                        window.location.href = `http://127.0.0.1:8000/${locale}/blogs`;
                     } else {
                         console.log("Login failed:", response.message || "No message provided");
                     }

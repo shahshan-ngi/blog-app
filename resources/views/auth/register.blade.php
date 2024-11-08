@@ -45,6 +45,8 @@
 
     <script>
   $(document).ready(function() {
+    const locale = "{{app()->getLocale()}}";
+
     $("#RegisterForm").on('submit', function(e) {
         e.preventDefault(); 
 
@@ -60,7 +62,7 @@
             success: function(response) {
                 console.log(response);
                 if (response.status=='success') {
-                    window.location.href = "http://127.0.0.1:8000/blogs";
+                    window.location.href = `http://127.0.0.1:8000/${locale}/blogs`;
                 } else {
                     console.log("No token found in response");
                 }

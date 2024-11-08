@@ -50,13 +50,15 @@
     <div class="container py-3 d-flex justify-content-between align-items-center">
         <a style="text-decoration:none;" href="">
             <div class="h1 text-white">{{ __('messages.title') }}</div>
+            <p>@json(session('locale'))</p>
         </a>
         <div id="Auth" class="d-flex align-items-center">
-            <!-- Language Switcher -->
-            <select id="languageSwitcher" class="form-select" style="width: 100px;">
-                <option value="en" {{ app()->getLocale() === 'en' ? 'selected' : '' }}>English</option>
-                <option value="fr" {{ app()->getLocale() === 'fr' ? 'selected' : '' }}>Français</option>
-            </select>
+           
+        
+        <a href="{{ route(\Illuminate\Support\Facades\Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'en'])) }}">EN</a>
+
+        <a href="{{ route(\Illuminate\Support\Facades\Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'fr'])) }}">FR</a>
+
         </div>
     </div>
     </div>
@@ -73,33 +75,14 @@
     </div>
 
     <script>
-    $(document).ready(function() {
-
-        $('#languageSwitcher').change(function() {
-            const selectedLang = $(this).val();
-            
-            $.ajax({
-                url: "http://127.0.0.1:8000/api/set-lang",
-                type: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    locale: selectedLang
-                },
-                success: function() {
-       
-                    //location.reload();
-                },
-                error: function(xhr) {
-                    console.error("Language switch error:", xhr);
-                }
-            });
-        });
-
+   
         const user = {
             id: '',
             profile_image: ''
         };
-
+        const locale = "{{app()->getLocale()}}";
+        
+        
     
         function getCookie(name) {
       
@@ -137,13 +120,13 @@
             <div class="sidebar">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a href="http://127.0.0.1:8000/blogs/" class="nav-link">{{ __('messages.home') }}</a>
+                        <a href="http://127.0.0.1:8000/${locale}/blogs" class="nav-link">{{ __('messages.home') }}</a>
                     </li>
                     <li class="nav-item">
-                        <a href="http://127.0.0.1:8000/myblogs" class="nav-link">My Blogs</a>
+                        <a href="http://127.0.0.1:8000/${locale}/myblogs" class="nav-link">My Blogs</a>
                     </li>
                     <li class="nav-item">
-                        <a href="http://127.0.0.1:8000/blogs/create" class="nav-link">Create Blog</a>
+                        <a href="http://127.0.0.1:8000/${locale}/blogs/create" class="nav-link">Create Blog</a>
                     </li>
                     <li class="nav-item">
                         <a href="#" id="logoutLink" class="nav-link">Logout</a>
@@ -175,7 +158,7 @@
                 });
             });
         }
-    });
+
 </script>
 
 

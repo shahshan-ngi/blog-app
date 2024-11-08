@@ -47,7 +47,6 @@
 </div>
 <script>
     $(document).ready(function(){
-    
         $("#CreateBlog").on('submit',function(e){
             e.preventDefault();
             var formData = new FormData(this);
@@ -60,7 +59,7 @@
                 contentType: false, 
                 processData: false, 
                 success: function(response) {
-                    window.location.href = "http://127.0.0.1:8000/blogs";
+                    window.location.href = 'http://127.0.0.1:8000/en/blogs';
                 },
                 error: function(xhr) {
                 if (xhr.status === 422) {

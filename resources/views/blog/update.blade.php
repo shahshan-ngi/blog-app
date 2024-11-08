@@ -34,6 +34,7 @@
 </div>
 <script>
     $(document).ready(function() {
+        const locale="{{app()->getLocale()}}";
         const urlParts = window.location.pathname.split('/'); 
         const blogId = urlParts[urlParts.length - 2]; 
         if (blogId) {

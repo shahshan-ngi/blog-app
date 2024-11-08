@@ -24,7 +24,7 @@
 </div>
 <script>
     $(document).ready(function () {
-     
+        const locale = "{{ app()->getLocale() }}";
         // function getCookie(name) {
         //     const value = `; ${document.cookie}`;
         //     const parts = value.split(`; ${name}=`);
@@ -105,7 +105,7 @@
         });
 
         function updateBlog(blogId) {
-            window.location.href = `http://127.0.0.1:8000/blogs/${blogId}/edit`;
+            window.location.href = `http://127.0.0.1:8000/${locale}/blogs/${blogId}/edit`;
         }
 
         function deleteBlog(blogId) {
